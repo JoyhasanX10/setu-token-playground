@@ -145,7 +145,7 @@ function Dashboard() {
         <main className="min-w-0 space-y-5">
           <section className="glass-card relative overflow-hidden">
             <img src={heroCoin} alt="Setu Labs coin" width={1280} height={640} className="absolute inset-0 h-full w-full object-cover object-right opacity-90" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent" />
             <div className="relative p-6 md:p-7">
               <p className="text-sm text-muted-foreground">Welcome to</p>
               <h1 className="text-4xl font-bold md:text-5xl">Setu <span className="text-gradient">Labs</span></h1>

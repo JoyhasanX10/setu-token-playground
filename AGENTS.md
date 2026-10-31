@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep dashboard motion primitives and easing in src/styles.css so section, balance, and modal animations stay consistent and honor reduced-motion preferences.
+- Keep MetaMask provider discovery and connection lifecycle in browser-safe wallet modules, separate from locally stored demo balances; never restore wallet identity from demo storage.

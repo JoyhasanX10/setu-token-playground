@@ -7,6 +7,9 @@ import {
 } from "lucide-react";
 import heroCoin from "@/assets/hero-coin.jpg";
 import setuLogo from "@/assets/setu-logo.png";
+import { Button } from "@/components/ui/button";
+import { useMetaMask } from "@/lib/use-metamask";
+import { shortAddress } from "@/lib/metamask";
 import {
   useDemoStore, TOKENS, type TokenSym, BDT_PER_USDT, fmt, totalUsdt,
   applyDeposit, applyConvert, applySwap, initialState,
@@ -54,13 +57,22 @@ function Logo() {
 
 function Dashboard() {
   const { state, setState, update } = useDemoStore();
+  const { address, connecting, disconnecting, error: walletMessage, connect, disconnect } = useMetaMask();
   const [modal, setModal] = useState<Modal>(null);
   const [hidden, setHidden] = useState(false);
   const [menu, setMenu] = useState(false);
   const total = totalUsdt(state);
 
-  const needWallet = (m: Modal) => {
-    if (!state.wallet) { setModal("wallet"); toast.info("Connect the demo wallet first"); return; }
+  const connectWallet = async () => {
+    const connected = await connect();
+    if (connected) toast.success("MetaMask wallet connected");
+  };
+
+  const needWallet = async (m: Modal) => {
+    if (!address) {
+      const connected = await connect();
+      if (!connected) return;
+    }
     setModal(m);
   };
 
@@ -75,19 +87,21 @@ function Dashboard() {
   ];
 
   const WalletBtn = ({ big }: { big?: boolean }) =>
-    state.wallet ? (
-      <button onClick={() => setModal("wallet")} className={`flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium hover:bg-accent ${big ? "" : ""}`}>
-        <span className="h-2 w-2 rounded-full bg-success" />{state.wallet.slice(0, 6)}…{state.wallet.slice(-4)}
-      </button>
+    address ? (
+      <Button variant="secondary" onClick={() => setModal("wallet")} className="motion-control flex h-auto items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium hover:bg-accent" title={address}>
+        <span className="h-2 w-2 rounded-full bg-success" />
+        <span className="text-left"><span className="block">Wallet Connected</span><span className="block text-xs text-muted-foreground">{shortAddress(address)}</span></span>
+      </Button>
     ) : (
-      <button onClick={() => setModal("wallet")} className="btn-primary flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium">
-        <Wallet className="h-4 w-4" /> Connect Wallet {big && <ArrowRight className="h-4 w-4" />}
-      </button>
+      <Button disabled={connecting || disconnecting} onClick={connectWallet} className="btn-primary motion-control flex h-auto items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium">
+        <Wallet className="h-4 w-4" /> {connecting ? "Connecting…" : disconnecting ? "Disconnecting…" : "Connect Wallet"} {big && <ArrowRight className="h-4 w-4" />}
+      </Button>
     );
 
   return (
     <div className="min-h-screen">
       <Toaster theme="dark" position="top-center" richColors />
+      {walletMessage && <div role="alert" className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-lg border border-border bg-card p-4 text-sm shadow-lg">{walletMessage}</div>}
       <div className="sticky top-0 z-30 bg-warning py-1 text-center text-xs font-bold tracking-widest text-background">
         ● DEMO MODE — no real money, crypto or blockchain transactions
       </div>
@@ -238,25 +252,13 @@ function Dashboard() {
       </div>
 
       {modal === "wallet" && (
-        <ModalShell title="Demo Wallet" onClose={() => setModal(null)}>
-          {state.wallet ? (
+        <ModalShell title="MetaMask Wallet" onClose={() => setModal(null)} wallet>
+          {address && (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">Connected demo address</p>
-              <p className="break-all rounded-lg bg-secondary p-3 font-mono text-sm">{state.wallet}</p>
-              <button onClick={() => { setState({ ...state, wallet: null }); setModal(null); toast("Demo wallet disconnected"); }}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-border py-3 hover:bg-secondary"><LogOut className="h-4 w-4" />Disconnect</button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">This creates a fake wallet address for testing. Setu Labs will <b>never</b> ask for your private key or seed phrase.</p>
-              {["Demo MetaMask", "Demo Trust Wallet", "Demo WalletConnect"].map((w) => (
-                <button key={w} onClick={() => {
-                  const addr = "0x" + Array.from({ length: 40 }, () => "0123456789abcdef"[Math.floor(Math.random() * 16)]).join("");
-                  setState({ ...state, wallet: addr }); setModal(null); toast.success(`${w} connected`);
-                }} className="flex w-full items-center justify-between rounded-lg border border-border bg-secondary p-3 hover:bg-accent">
-                  <span className="flex items-center gap-2"><Wallet className="h-4 w-4" />{w}</span><ChevronRight className="h-4 w-4" />
-                </button>
-              ))}
+              <p className="text-sm text-muted-foreground">Wallet Connected</p>
+              <p className="break-all rounded-lg bg-secondary p-3 font-mono text-sm">{address}</p>
+              <Button variant="outline" onClick={() => { void disconnect(); setModal(null); toast("Wallet disconnected from Setu Labs"); }}
+                className="motion-control flex h-auto w-full items-center justify-center gap-2 rounded-lg border border-border bg-transparent py-3 hover:bg-secondary"><LogOut className="h-4 w-4" />Disconnect</Button>
             </div>
           )}
         </ModalShell>
@@ -327,7 +329,7 @@ function TxList({ txs }: { txs: { id: string; type: string; title: string; detai
   );
 }
 
-function ModalShell({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+function ModalShell({ title, onClose, children, wallet = false }: { title: string; onClose: () => void; children: ReactNode; wallet?: boolean }) {
   return (
     <div className="modal-backdrop fixed inset-0 z-50 grid place-items-end bg-background/70 backdrop-blur-sm sm:place-items-center" onClick={onClose}>
       <div role="dialog" aria-modal="true" aria-label={title} className="modal-panel glass-card glow-border w-full max-w-md bg-card p-5" onClick={(e) => e.stopPropagation()}>
@@ -336,7 +338,7 @@ function ModalShell({ title, onClose, children }: { title: string; onClose: () =
           <button aria-label="Close" onClick={onClose}><X className="h-5 w-5" /></button>
         </div>
         {children}
-        <p className="mt-4 text-center text-[10px] font-semibold tracking-widest text-warning">DEMO MODE • SIMULATED ONLY</p>
+        <p className="mt-4 text-center text-[10px] font-semibold tracking-widest text-warning">{wallet ? "REAL WALLET CONNECTION • TRANSACTIONS REMAIN DEMO" : "DEMO MODE • SIMULATED ONLY"}</p>
       </div>
     </div>
   );

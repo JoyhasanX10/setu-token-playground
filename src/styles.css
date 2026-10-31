@@ -106,6 +106,8 @@
   --gradient-card: linear-gradient(160deg, oklch(0.22 0.07 255 / 90%), oklch(0.16 0.045 255 / 90%));
   --gradient-page: radial-gradient(ellipse at top right, oklch(0.25 0.1 255) 0%, transparent 55%), radial-gradient(ellipse at bottom left, oklch(0.2 0.08 250) 0%, transparent 50%), var(--background);
   --shadow-glow: 0 0 30px -6px color-mix(in oklab, var(--primary) 55%, transparent);
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-duration: 360ms;
 }
 
 @layer base {
@@ -122,17 +124,19 @@
 @layer base {
   body { background: var(--gradient-page); background-attachment: fixed; font-family: var(--font-sans); }
   button {
-    transition-property: transform, box-shadow, background-color, border-color, color, filter;
-    transition-duration: 200ms;
-    transition-timing-function: ease;
+    transition-property: transform, box-shadow, background-color, border-color, color, filter, opacity;
+    transition-duration: var(--motion-duration);
+    transition-timing-function: var(--motion-ease);
   }
-  button:not(:disabled):active { transform: scale(0.97); }
+  button:not(:disabled):active { transform: scale(0.99); transition-duration: 120ms; }
   @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
+      animation-delay: 0ms !important;
       transition-duration: 0.01ms !important;
     }
+    button:not(:disabled):active { transform: none; }
   }
 }
 @utility glass-card {
@@ -143,21 +147,26 @@
 }
 /* ---- Motion ---- */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes balance-pop {
-  0% { transform: scale(0.94); opacity: 0.35; }
-  60% { transform: scale(1.02); }
-  100% { transform: scale(1); opacity: 1; }
+  from { transform: translateY(4px); opacity: 0.55; }
+  to { transform: translateY(0); opacity: 1; }
 }
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: var(--shadow-glow); }
-  50% { box-shadow: 0 0 46px -4px color-mix(in oklab, var(--primary) 65%, transparent); }
+@keyframes soft-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-@utility fade-up { animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
-@utility balance-pop { animation: balance-pop 0.45s ease-out both; }
-@utility glow-pulse { animation: glow-pulse 5.5s ease-in-out infinite; }
+@utility fade-up { animation: fade-up 650ms var(--motion-ease) backwards; }
+@utility balance-pop { display: inline-block; animation: balance-pop 480ms var(--motion-ease) backwards; }
+@utility modal-backdrop { animation: soft-fade 300ms var(--motion-ease) backwards; }
+@utility modal-panel { animation: fade-up 420ms var(--motion-ease) backwards; }
+@utility motion-control {
+  transition-property: transform, box-shadow, background-color, border-color, color, filter, opacity;
+  transition-duration: var(--motion-duration);
+  transition-timing-function: var(--motion-ease);
+}
 @utility glow-border { box-shadow: var(--shadow-glow); border-color: color-mix(in oklab, var(--primary) 60%, transparent); }
 @utility btn-primary {
   background: var(--gradient-primary); color: var(--primary-foreground); box-shadow: var(--shadow-glow);

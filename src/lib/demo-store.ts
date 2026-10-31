@@ -18,7 +18,6 @@ export type Tx = {
 };
 
 export type DemoState = {
-  wallet: string | null;
   bdt: number;
   usdt: number;
   tokens: Record<TokenSym, number>;
@@ -27,7 +26,6 @@ export type DemoState = {
 
 const KEY = "setu-labs-demo-v1";
 export const initialState: DemoState = {
-  wallet: null,
   bdt: 0,
   usdt: 0,
   tokens: { BTC: 0, ETH: 0, BNB: 0, SOL: 0 },
@@ -97,7 +95,10 @@ export function useDemoStore() {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) setState({ ...initialState, ...JSON.parse(raw) });
+      if (raw) {
+        const saved = JSON.parse(raw);
+        setState({ bdt: saved.bdt ?? 0, usdt: saved.usdt ?? 0, tokens: saved.tokens ?? initialState.tokens, txs: saved.txs ?? [] });
+      }
     } catch {}
     setLoaded(true);
   }, []);

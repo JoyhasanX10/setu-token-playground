@@ -264,21 +264,21 @@ function Dashboard() {
       {modal === "deposit" && (
         <DepositModal onClose={() => setModal(null)} onSubmit={(amt, method) => {
           const err = update((s) => applyDeposit(s, amt, method));
-          if (err) return toast.error(err);
+          if (err) { toast.error(err); return; }
           toast.success(`৳${fmt(amt)} deposited (demo)`); setModal(null);
         }} />
       )}
       {modal === "convert" && (
         <ConvertModal bdt={state.bdt} onClose={() => setModal(null)} onDeposit={() => setModal("deposit")} onSubmit={(amt) => {
           const err = update((s) => applyConvert(s, amt));
-          if (err) return toast.error(err);
+          if (err) { toast.error(err); return; }
           toast.success(`Converted to ${fmt(amt / BDT_PER_USDT)} USDT`); setModal(null);
         }} />
       )}
       {modal === "swap" && (
         <SwapModal usdt={state.usdt} tokens={state.tokens} onClose={() => setModal(null)} onSubmit={(sym, amt, dir) => {
           const err = update((s) => applySwap(s, sym, amt, dir));
-          if (err) return toast.error(err);
+          if (err) { toast.error(err); return; }
           toast.success("Swap complete (demo)"); setModal(null);
         }} />
       )}

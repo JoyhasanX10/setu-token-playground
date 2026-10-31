@@ -3,9 +3,10 @@ import { useState, type ReactNode } from "react";
 import { Toaster, toast } from "sonner";
 import {
   Bell, Wallet, Home, PlusCircle, ArrowLeftRight, Repeat, Layers, Settings, LineChart,
-  ArrowRight, ChevronRight, Eye, EyeOff, X, History, Compass, Plus, LogOut, Menu, Trash2,
+  ArrowRight, ChevronRight, Eye, EyeOff, X, History, Plus, LogOut, Menu, Trash2,
 } from "lucide-react";
 import heroCoin from "@/assets/hero-coin.jpg";
+import setuLogo from "@/assets/setu-logo.png";
 import {
   useDemoStore, TOKENS, type TokenSym, BDT_PER_USDT, fmt, totalUsdt,
   applyDeposit, applyConvert, applySwap, initialState,
@@ -45,7 +46,7 @@ function TokenDot({ sym, color, size = 36 }: { sym: string; color: string; size?
 function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <Compass className="h-9 w-9 text-primary-glow" strokeWidth={1.6} />
+      <img src={setuLogo} alt="Setu Labs logo" width={40} height={40} className="h-10 w-10" />
       <span className="text-xl font-bold tracking-wide">SETU <span className="font-normal text-primary-glow">LABS</span></span>
     </div>
   );
@@ -144,7 +145,7 @@ function Dashboard() {
         <main className="min-w-0 space-y-5">
           <section className="glass-card relative overflow-hidden">
             <img src={heroCoin} alt="Setu Labs coin" width={1280} height={640} className="absolute inset-0 h-full w-full object-cover object-right opacity-90" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/50 to-transparent" />
             <div className="relative p-6 md:p-7">
               <p className="text-sm text-muted-foreground">Welcome to</p>
               <h1 className="text-4xl font-bold md:text-5xl">Setu <span className="text-gradient">Labs</span></h1>

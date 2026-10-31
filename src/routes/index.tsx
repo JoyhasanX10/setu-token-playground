@@ -155,8 +155,8 @@ function Dashboard() {
             </div>
           </section>
 
-          <section className="glass-card glow-border glow-pulse relative overflow-hidden p-6 fade-up [animation-delay:100ms]">
-            <div className="flex items-center gap-3 text-lg fade-up [animation-delay:200ms]">
+          <section className="glass-card glow-border relative overflow-hidden p-6 fade-up [animation-delay:80ms]">
+            <div className="flex items-center gap-3 text-lg">
               <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/25"><Wallet className="h-5 w-5 text-primary-glow" /></div>
               Total Balance
             </div>
@@ -167,13 +167,13 @@ function Dashboard() {
               </button>
             </div>
             <p className="mt-1 text-muted-foreground">≈ {hidden ? "••••" : fmt(state.usdt)} USDT available</p>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs fade-up [animation-delay:250ms]">
+            <div className="mt-4 flex flex-wrap gap-2 text-xs">
               <Chip>BDT ৳{hidden ? "••" : fmt(state.bdt)}</Chip>
               {(Object.keys(TOKENS) as TokenSym[]).filter((k) => state.tokens[k] > 0).map((k) => (
                 <Chip key={k}>{k} {hidden ? "••" : fmt(state.tokens[k], 6)}</Chip>
               ))}
             </div>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 fade-up [animation-delay:300ms]">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
               <button onClick={() => needWallet("deposit")} className="col-span-2 flex items-center justify-center gap-2 rounded-xl border border-border bg-secondary py-3.5 font-medium hover:-translate-y-0.5 hover:bg-accent hover:shadow-lg sm:col-span-1">
                 <PlusCircle className="h-5 w-5" />Deposit
               </button>
@@ -186,13 +186,13 @@ function Dashboard() {
             </div>
           </section>
 
-          <section className="grid gap-4 sm:grid-cols-3 fade-up [animation-delay:200ms]">
+          <section className="grid gap-4 sm:grid-cols-3 fade-up [animation-delay:160ms]">
             {[
               { t: "Deposit", d: "Add funds using local payment methods", i: PlusCircle, m: "deposit" as Modal },
               { t: "Convert to USDT", d: "Turn your BDT to USDT instantly", i: ArrowLeftRight, m: "convert" as Modal },
               { t: "Swap Tokens", d: "Trade tokens directly from your wallet", i: Repeat, m: "swap" as Modal },
             ].map((c) => (
-              <button key={c.t} onClick={() => needWallet(c.m)} className="glass-card flex items-start gap-3 p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:glow-border hover:shadow-xl">
+              <button key={c.t} onClick={() => needWallet(c.m)} className="glass-card motion-control flex items-start gap-3 p-4 text-left hover:-translate-y-0.5 hover:glow-border">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent"><c.i className="h-5 w-5" /></div>
                 <div className="min-w-0 flex-1">
                   <div className="font-semibold">{c.t}</div>
@@ -203,7 +203,7 @@ function Dashboard() {
             ))}
           </section>
 
-          <section className="glass-card p-5 fade-up [animation-delay:300ms]">
+          <section className="glass-card p-5 fade-up [animation-delay:240ms]">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="font-semibold">Recent Transactions</h2>
               <button onClick={() => setModal("history")} className="text-xs text-primary-glow">View all</button>
@@ -213,7 +213,7 @@ function Dashboard() {
         </main>
 
         {/* Right */}
-        <aside id="networks" className="glass-card h-fit p-4 fade-up [animation-delay:400ms]">
+        <aside id="networks" className="glass-card h-fit p-4 fade-up [animation-delay:160ms]">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="font-semibold">Supported Networks</h2>
             <span className="text-xs text-primary-glow">Demo</span>
@@ -313,7 +313,7 @@ function TxList({ txs }: { txs: { id: string; type: string; title: string; detai
       {txs.map((t, idx) => {
         const I = icon[t.type as keyof typeof icon];
         return (
-          <li key={t.id} className="flex items-center gap-3 py-3 fade-up" style={{ animationDelay: `${idx * 70}ms` }}>
+          <li key={t.id} className="flex items-center gap-3 py-3 fade-up" style={{ animationDelay: `${Math.min(idx, 4) * 45}ms` }}>
             <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent"><I className="h-4 w-4" /></div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-medium">{t.title}</div>
@@ -329,8 +329,8 @@ function TxList({ txs }: { txs: { id: string; type: string; title: string; detai
 
 function ModalShell({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   return (
-    <div className="fixed inset-0 z-50 grid place-items-end bg-background/70 backdrop-blur-sm animate-in fade-in duration-200 sm:place-items-center" onClick={onClose}>
-      <div className="glass-card glow-border w-full max-w-md bg-card p-5 animate-in fade-in slide-in-from-bottom-8 zoom-in-95 duration-300 sm:slide-in-from-bottom-2" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-backdrop fixed inset-0 z-50 grid place-items-end bg-background/70 backdrop-blur-sm sm:place-items-center" onClick={onClose}>
+      <div role="dialog" aria-modal="true" aria-label={title} className="modal-panel glass-card glow-border w-full max-w-md bg-card p-5" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold">{title}</h3>
           <button aria-label="Close" onClick={onClose}><X className="h-5 w-5" /></button>

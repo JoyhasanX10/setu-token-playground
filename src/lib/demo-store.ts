@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 export const BDT_PER_USDT = 122.5; // demo rate
 export const TOKENS = {
@@ -104,17 +104,13 @@ export function useDemoStore() {
   useEffect(() => {
     if (loaded) localStorage.setItem(KEY, JSON.stringify(state));
   }, [state, loaded]);
-  const update = useCallback((fn: (s: DemoState) => DemoState) => {
-    let err: string | null = null;
-    setState((s) => {
-      try {
-        return fn(s);
-      } catch (e) {
-        err = (e as Error).message;
-        return s;
-      }
-    });
-    return err;
-  }, []);
+  const update = (fn: (s: DemoState) => DemoState): string | null => {
+    try {
+      setState(fn(state));
+      return null;
+    } catch (e) {
+      return (e as Error).message;
+    }
+  };
   return { state, setState, update };
 }

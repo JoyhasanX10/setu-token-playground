@@ -310,7 +310,7 @@ function TxList({ txs }: { txs: { id: string; type: string; title: string; detai
   const icon = { deposit: PlusCircle, convert: ArrowLeftRight, swap: Repeat } as const;
   return (
     <ul className="divide-y divide-border">
-      {txs.map((t) => {
+      {txs.map((t, idx) => {
         const I = icon[t.type as keyof typeof icon];
         return (
           <li key={t.id} className="flex items-center gap-3 py-3 fade-up" style={{ animationDelay: `${idx * 70}ms` }}>

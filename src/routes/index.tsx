@@ -3,9 +3,10 @@ import { useState, type ReactNode } from "react";
 import { Toaster, toast } from "sonner";
 import {
   Bell, Wallet, Home, PlusCircle, ArrowLeftRight, Repeat, Layers, Settings, LineChart,
-  ArrowRight, ChevronRight, Eye, EyeOff, X, History, Compass, Plus, LogOut, Menu, Trash2,
+  ArrowRight, ChevronRight, Eye, EyeOff, X, History, Plus, LogOut, Menu, Trash2,
 } from "lucide-react";
 import heroCoin from "@/assets/hero-coin.jpg";
+import setuLogo from "@/assets/setu-logo.png";
 import {
   useDemoStore, TOKENS, type TokenSym, BDT_PER_USDT, fmt, totalUsdt,
   applyDeposit, applyConvert, applySwap, initialState,
@@ -45,7 +46,7 @@ function TokenDot({ sym, color, size = 36 }: { sym: string; color: string; size?
 function Logo() {
   return (
     <div className="flex items-center gap-2">
-      <Compass className="h-9 w-9 text-primary-glow" strokeWidth={1.6} />
+      <img src={setuLogo} alt="Setu Labs logo" width={40} height={40} className="h-10 w-10" />
       <span className="text-xl font-bold tracking-wide">SETU <span className="font-normal text-primary-glow">LABS</span></span>
     </div>
   );
